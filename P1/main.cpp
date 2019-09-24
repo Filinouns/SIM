@@ -28,6 +28,10 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
+PxGeometry*				Sphere_		= NULL;	//Esfera
+Particle*				myParticle	= NULL;
+		
+Vector4 color = { 0.1, 0.3, 1, 0};
 list<Particle*> particles_;
 
 // Initialize physics engine
@@ -56,16 +60,9 @@ void initPhysics(bool interactive) {
 
 	//-----------------Objects----------------
 
-	PxSphereGeometry *sphere = new PxSphereGeometry(4);
-	PxShape *sphere_ = CreateShape(*sphere);
-	RenderItem *rend_it = new RenderItem(sphere_, Vector4(0, 0, 1.0, 0.6));	//Probar transform como puntero
-	sphere_->release();
-	Particle *p = new Particle(0.5f, rend_it);
-
-	//gScene->addActor(p);
-	particles_.push_back(p);
+	//----Particula-----
+	Sphere_ = new PxSphereGeometry(4);
 }
-
 
 // Function to configure what happens in each step of physics
 // interactive: true if the game is rendering, false if it offline
@@ -75,6 +72,13 @@ void stepPhysics(bool interactive, double t) {
 
 	gScene->simulate(t);
 	gScene->fetchResults(true);
+
+	//myParticle->update(t);
+	if (particles_.size() > 0){
+		for (auto p : particles_) {
+			p->update(t);
+		}
+	}
 }
 
 // Function to clean data
@@ -91,7 +95,25 @@ void cleanupPhysics(bool interactive) {
 	gPvd->release();
 	transport->release();
 	
+	if (particles_.size() > 0) {
+		for (auto p : particles_) {
+			p = nullptr;
+			delete p;
+		}
+	}
+
 	gFoundation->release();
+}
+
+void createParticle(Vector3 acc, float dump) {
+	myParticle = new Particle(CreateShape(*Sphere_), color, 1.0f);
+	myParticle->setPos(GetCamera()->getTransform().p);
+	myParticle->setVel({ GetCamera()->getDir() * 100 });
+	myParticle->setAcc(acc);
+	myParticle->setDump(dump);
+	myParticle->setState(State::ON);
+
+	particles_.push_back(myParticle);
 }
 
 // Function called when a key is pressed
@@ -101,8 +123,10 @@ void keyPress(unsigned char key, const PxTransform& camera) {
 	switch(toupper(key)) {
 	//case 'B': break;
 	//case ' ':	break;
-	case ' ':
-	{
+	case 'B': {
+		Vector3 acc = {GetCamera()->getDir() * 100};
+		createParticle(acc, 0.5f);
+
 		break;
 	}
 	default:
@@ -114,7 +138,6 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2) {
 	PX_UNUSED(actor1);
 	PX_UNUSED(actor2);
 }
-
 
 int main(int, const char*const*) {
 #ifndef OFFLINE_EXECUTION 

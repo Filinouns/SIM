@@ -15,6 +15,7 @@ public:
 	Particle(PxShape* shape, Vector4 color, float mass);
 	virtual ~Particle();
 
+	//---Funciones de atributos---
 	void setPos(Vector3 pos) { pos_.p = pos; }
 	void setVel(Vector3 vel) { vel_ = vel; }
 	Vector3 getVel() { return vel_; }
@@ -27,7 +28,7 @@ public:
 	void integrate(float t);
 
 	void update(float t);
-	RenderItem* createItem(PxShape* shape) { return new RenderItem(shape, &pos_, color_); }
+	RenderItem* createItem() { return renderItem_; }
 
 private:
 	PxTransform pos_;	// Posicion
@@ -35,6 +36,8 @@ private:
 	Vector3 dir_;	// Direccion
 	Vector3 acc_;	// Aceleracion
 	Vector4 color_;	// Color
+
+	RenderItem *renderItem_;
 
 	int age_;
 	State state_;

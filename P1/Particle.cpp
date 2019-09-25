@@ -1,8 +1,6 @@
 #include "Particle.h"
 
 Particle::Particle(PxShape* shape, Vector4 color, float mass) {
-	damping_ = 0.2;
-
 	this->state_ = State::OFF;
 	pos_.p = { 0, 0, 0 };
 	pos_.q = { 0, 0, 0, 0 };
@@ -14,10 +12,15 @@ Particle::Particle(PxShape* shape, Vector4 color, float mass) {
 
 	age_ = 0;
 
-	createItem(shape);
+	//PxShape* shape_ = shape;
+	renderItem_ = new RenderItem(shape, &pos_, color_);
+	//createItem();
+	//shape_->release();
 }
 
-Particle::~Particle() {}
+Particle::~Particle() {
+	if (renderItem_) { renderItem_->release(); }
+}
 
 void Particle::update(float t) {
 	if (this->state_ == State::ON) {

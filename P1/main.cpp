@@ -97,7 +97,7 @@ void cleanupPhysics(bool interactive) {
 	
 	if (particles_.size() > 0) {
 		for (auto p : particles_) {
-			p = nullptr;
+			//p = nullptr;
 			delete p;
 		}
 	}
@@ -106,8 +106,12 @@ void cleanupPhysics(bool interactive) {
 }
 
 void createParticle(Vector3 acc, float dump) {
-	myParticle = new Particle(CreateShape(*Sphere_), color, 1.0f);
+	PxShape* shape = CreateShape(*Sphere_);
+	myParticle = new Particle(shape, color, 1.0f);
+	shape->release();
+
 	myParticle->setPos(GetCamera()->getTransform().p);
+	//myParticle->setPos(GetCamera()->getEye());
 	myParticle->setVel({ GetCamera()->getDir() * 100 });
 	myParticle->setAcc(acc);
 	myParticle->setDump(dump);

@@ -1,5 +1,7 @@
 #include "Particle.h"
 
+const float MAX_AGE = 20.0f;
+
 Particle::Particle(PxShape* shape, Vector4 color, float mass) {
 	this->state_ = State::OFF;
 	pos_.p = { 0, 0, 0 };
@@ -12,10 +14,7 @@ Particle::Particle(PxShape* shape, Vector4 color, float mass) {
 
 	age_ = 0;
 
-	//PxShape* shape_ = shape;
 	renderItem_ = new RenderItem(shape, &pos_, color_);
-	//createItem();
-	//shape_->release();
 }
 
 Particle::~Particle() {
@@ -24,8 +23,11 @@ Particle::~Particle() {
 
 void Particle::update(float t) {
 	if (this->state_ == State::ON) {
-		age_++;
+		age_ += t;
 		integrate(t);
+		if (age_ >= MAX_AGE) {
+			this->state_ = State::OFF;
+		}
 	}
 }
 
@@ -40,4 +42,12 @@ void Particle::integrate(float t) {
 
 	// Impose drag (damping)
 	vel_ *= powf(damping_, t);
+}
+
+void Particle::init(Vector3 p, Vector3 v, Vector3 acc, float d) {
+	this->setPos(p);
+	this->setVel(v);
+	this->setAcc(acc);
+	this->setDump(d);
+	this->setState(State::ON);
 }

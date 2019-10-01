@@ -10,6 +10,7 @@
 #include "callbacks.hpp"
 
 #include "Particle.h"
+#include "ParticleSystem.h"
 
 using namespace physx;
 using namespace std;
@@ -29,7 +30,8 @@ PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
 PxGeometry*				Sphere_		= NULL;	//Esfera
-Particle*				myParticle	= NULL;
+ParticleSystem*		ParticleSystem_ = NULL; //Sistema de particulas
+Particle*			   	 myParticle = NULL; //Particula
 		
 Vector4 color = { 0.1, 0.3, 1, 0};
 list<Particle*> particles_;
@@ -42,9 +44,9 @@ void initPhysics(bool interactive) {
 
 	gPvd = PxCreatePvd(*gFoundation);
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
-	gPvd->connect(*transport,PxPvdInstrumentationFlag::eALL);
+	gPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
-	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(),true,gPvd);
+	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), true, gPvd);
 
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
@@ -60,8 +62,12 @@ void initPhysics(bool interactive) {
 
 	//-----------------Objects----------------
 
-	//----Particula-----
-	Sphere_ = new PxSphereGeometry(4);
+	// Sistema Fuente
+	Sphere_ = new PxSphereGeometry(2);
+	Vector3 pos = GetCamera()->getDir() * 100;
+	ParticleSystem_ = new ParticleSystem(Sphere_, color, pos, SystemType::Fountain);
+	// Sistema Fireworks
+	pos = GetCamera()->getDir() + Vector3{100, 0, 0};
 }
 
 // Function to configure what happens in each step of physics
@@ -73,8 +79,9 @@ void stepPhysics(bool interactive, double t) {
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 
-	//myParticle->update(t);
-	if (particles_.size() > 0){
+	ParticleSystem_->update(t);
+
+	if (particles_.size() > 0) {
 		for (auto p : particles_) {
 			p->update(t);
 		}
@@ -102,6 +109,8 @@ void cleanupPhysics(bool interactive) {
 		}
 	}
 
+	delete ParticleSystem_;
+
 	gFoundation->release();
 }
 
@@ -110,12 +119,11 @@ void createParticle(Vector3 acc, float dump) {
 	myParticle = new Particle(shape, color, 1.0f);
 	shape->release();
 
-	myParticle->setPos(GetCamera()->getTransform().p);
-	//myParticle->setPos(GetCamera()->getEye());
-	myParticle->setVel({ GetCamera()->getDir() * 100 });
-	myParticle->setAcc(acc);
-	myParticle->setDump(dump);
-	myParticle->setState(State::ON);
+	myParticle->init(
+		GetCamera()->getTransform().p,
+		{ GetCamera()->getDir() * 100 },
+		acc,
+		dump);
 
 	particles_.push_back(myParticle);
 }

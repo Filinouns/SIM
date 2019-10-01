@@ -13,6 +13,7 @@ enum State {
 class Particle {
 public:
 	Particle(PxShape* shape, Vector4 color, float mass);
+	Particle() {};
 	virtual ~Particle();
 
 	//---Funciones de atributos---
@@ -25,10 +26,9 @@ public:
 	State getState() { return this->state_; }
 	int getAge() { return age_; }
 
+	void init(Vector3 p, Vector3 v, Vector3 acc, float d);
 	void integrate(float t);
-
 	void update(float t);
-	RenderItem* createItem() { return renderItem_; }
 
 private:
 	PxTransform pos_;	// Posicion
@@ -39,7 +39,7 @@ private:
 
 	RenderItem *renderItem_;
 
-	int age_;
+	float age_;
 	State state_;
 
 	float inverse_mass;

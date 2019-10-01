@@ -15,23 +15,36 @@ enum SystemType {
 	Fountain, Fireworks 
 };
 
+enum ParticleType {
+	Esfera, Capsula, SuperCapsula, SuperEsfera
+};
+
 class ParticleSystem {
 public:
-	ParticleSystem(PxGeometry *g, Vector4 color, Vector3 p, SystemType t);
+	ParticleSystem(Vector3 p, SystemType t);
 	virtual ~ParticleSystem();
 
 	void update(float t);
 	void createParticle();
 	void createFirework();
 
-	Vector4 selectRndColor();
+	void createParticle(int t);
+
+	Vector4 rnd_Color();
 
 private:
-	Vector4 color1 = { 1, 0, 0, 0 };
-	Vector4 color2 = { 0, 1, 0, 0 };
+	Vector4 color1	=	{ 1, 0, 0, 0 };
+	Vector4 color2	=	{ 0, 1, 0, 0 };
+	Vector4 red		=	{ 1, 0, 0, 1 };
+	Vector4 magenta =	{ 1, 0, 1, 1 };
+	Vector4 blue	=	{ 0, 0, 1, 1 };
+	Vector4 yellow	=	{ 1, 0.92, 0.016, 1 };
 
 	// Particulas
 	list<Particle*> particles_;
+	Particle* particle = NULL;
+
+	Vector3 gravity = { 0, -10, 0 };
 
 	Vector4 color_;
 	float countdown_;

@@ -95,6 +95,21 @@ void stepPhysics(bool interactive, double t) {
 void cleanupPhysics(bool interactive) {
 	PX_UNUSED(interactive);
 
+	// ------Limpieza de los elementos de la escena-------
+	if (particles_.size() > 0) {
+		for (auto p : particles_) {
+			delete p;
+			p = nullptr;
+		}
+	}
+
+	if (s_particles_.size() > 0) {
+		for (auto p : s_particles_) {
+			delete p;
+			p = nullptr;
+		}
+	}
+
 	// Rigid Body ++++++++++++++++++++++++++++++++++++++++++
 	gScene->release();
 	gDispatcher->release();
@@ -103,15 +118,6 @@ void cleanupPhysics(bool interactive) {
 	PxPvdTransport* transport = gPvd->getTransport();
 	gPvd->release();
 	transport->release();
-	
-	if (particles_.size() > 0) {
-		for (auto p : particles_) {
-			delete p;
-			//p = nullptr;
-		}
-	}
-
-	delete ParticleSystem_;
 
 	gFoundation->release();
 }

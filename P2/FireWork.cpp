@@ -1,8 +1,12 @@
 #include "FireWork.h"
 
 FireWork::FireWork(PxShape* s, Vector4 color, float m) : Particle(s, color, m) {
-	generations_ = rand() % 5 + 2;
+	generations_ = (rand() % 3) + 2;
 	exploted_ = false;
+
+	//pos_.rotate({ 90, 90, 90 });
+	//Probar aqui para la direccion tocar el pxTransform
+	//this->getTrans().rotate();
 }
 
 FireWork::~FireWork() {
@@ -13,23 +17,42 @@ FireWork::~FireWork() {
 }
 
 void FireWork::update(float t) {
-	if (this->getState() == State::OFF && !exploted_) {
-		explote();
-	}
+	switch (state_) {
+	case State::ON:
+		age_ += t;
+		integrate(t);
+		if (age_ >= max_age) {
+			state_ = State::INVISIBLE;
+		}
+		break;
+	case State::OFF:
 
-	if (sub_particles.size() != 0) {
-		for (auto p : sub_particles) p->update(t);
+		break;
+	case State::INVISIBLE:
+		if (!exploted_) {
+			explote();
+			this->renderItem_->release();
+		}
+		else {
+			if (sub_particles.size() != 0) {
+				for (auto p : sub_particles) p->update(t);
+			}
+			Particle *p = *sub_particles.begin();
+			if (p->getState() == State::OFF) state_ = State::OFF;
+		}
+		break;
+	default:
+		break;
 	}
-
-	Particle::update(t);
 }
 
 void FireWork::explote() {
 	exploted_ = true;
-	PxGeometry* s = new PxSphereGeometry(2);
-	PxShape* shape = CreateShape(*s);
+	//CreateShape(PxCapsuleGeometry(1, 2));
+	//PxGeometry* s = new PxSphereGeometry(2);
+	//PxShape* shape = CreateShape(*s);
 	for (int i = 0; i < generations_; i++) {
-		Particle* p = new Particle(shape, randColor(), 2.5f);
+		Particle* p = new Particle(CreateShape(PxCapsuleGeometry(1, 2)), randColor(), 2.5f);
 		p->init(
 			this->getPos(),
 			{ static_cast<float>(rand() % 20),
@@ -38,12 +61,13 @@ void FireWork::explote() {
 			{ 0, -10, 0 },
 			0.99);
 
-		p->setMaxAge(2.0f);
+		p->setMaxAge(5.0f);
+		p->setState(State::ON);
 
 		sub_particles.push_back(p);
 	}
 
-	shape->release();
+	//shape->release();
 }
 
 Vector4 FireWork::randColor() {

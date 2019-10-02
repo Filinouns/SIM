@@ -16,17 +16,35 @@ Particle::Particle(PxShape* shape, Vector4 color, float mass) {
 	renderItem_ = new RenderItem(shape, &pos_, color_);
 }
 
+void Particle::init(Vector3 p, Vector3 v, Vector3 acc, float d) {
+	this->setPos(p);
+	this->setVel(v);
+	this->setAcc(acc);
+	this->setDump(d);
+	this->setState(State::ON);
+}
+
 Particle::~Particle() {
-	//if (renderItem_) { renderItem_->release(); }
+	if (this->renderItem_) { this->renderItem_->release(); }
 }
 
 void Particle::update(float t) {
-	if (this->state_ == State::ON) {
+	switch (this->state_) {
+	case State::ON:
 		age_ += t;
 		integrate(t);
 		if (age_ >= max_age) {
 			this->state_ = State::OFF;
 		}
+		break;
+	case State::OFF:
+		if (this->renderItem_) { this->renderItem_->release(); }
+		break;
+	case State::INVISIBLE:
+		if (this->renderItem_) { this->renderItem_->release(); }
+		break;
+	default:
+		break;
 	}
 }
 
@@ -41,12 +59,4 @@ void Particle::integrate(float t) {
 
 	// Impose drag (damping)
 	vel_ *= powf(damping_, t);
-}
-
-void Particle::init(Vector3 p, Vector3 v, Vector3 acc, float d) {
-	this->setPos(p);
-	this->setVel(v);
-	this->setAcc(acc);
-	this->setDump(d);
-	this->setState(State::ON);
 }

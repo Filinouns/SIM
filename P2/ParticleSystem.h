@@ -32,6 +32,8 @@ public:
 
 	Vector4 rnd_Color();
 
+	int MAX_PARTICLES = 20;
+
 private:
 	Vector4 color1	=	{ 1, 0, 0, 0 };
 	Vector4 color2	=	{ 0, 1, 0, 0 };
@@ -53,4 +55,6 @@ private:
 	//Sistema
 	PxTransform pos_;
 	SystemType type_;
+
+	int n_Particles;
 };

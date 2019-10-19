@@ -1,6 +1,6 @@
 #include "Particle.h"
 
-Particle::Particle(PxShape* shape, Vector4 color, float mass) {
+Particle::Particle(PxShape* shape, Vector4 color, float mass) : RenderItem(shape, &pos_, color){
 	this->state_ = State::OFF;
 	pos_.p = { 0, 0, 0 };
 	pos_.q = { 0, 0, 0, 0 };
@@ -14,44 +14,23 @@ Particle::Particle(PxShape* shape, Vector4 color, float mass) {
 
 	age_ = 0;
 	max_age = 20.0f;
-
-	renderItem_ = new RenderItem(shape, &pos_, color_);
 }
 
 void Particle::init(Vector3 p, Vector3 v, float d) {
 	this->setPos(p);
 	this->setVel(v);
-	//this->setAcc(acc);
 	this->setDump(d);
 	this->setState(State::ON);
 }
 
-Particle::~Particle() {
-	if (this->renderItem_) { this->renderItem_->release(); }
-}
-
 void Particle::update(float t) {
-	switch (this->state_) {
-	case State::ON:
-		age_ += t;
-		integrate(t);
-		if (age_ >= max_age) {
-			this->state_ = State::OFF;
-		}
-		break;
-	case State::OFF:
-		if (this->renderItem_) { this->renderItem_->release(); }
-		break;
-	case State::INVISIBLE:
-		if (this->renderItem_) { this->renderItem_->release(); }
-		break;
-	default:
-		break;
-	}
+	age_ += t;
+	integrate(t);
 }
 
 void Particle::integrate(float t) {
 	if (inverse_mass <= 0.0f) return;
+	if (this->getState() == OFF) return;
 
 	// Update pos
 	pos_.p += vel_ * t;
@@ -66,6 +45,11 @@ void Particle::integrate(float t) {
 	vel_ *= powf(damping_, t);
 
 	clearForce();
+
+	if (age_ >= max_age) {
+		DeregisterRenderItem(this);
+		this->state_ = State::OFF;
+	}
 }
 
 void Particle::clearForce() {

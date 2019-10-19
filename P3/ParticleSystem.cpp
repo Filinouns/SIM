@@ -6,14 +6,10 @@ ParticleSystem::ParticleSystem(Vector3 p) {
 	iniCount_ = countdown_;
 
 	pos_.p = p;
-
-	n_Particles = 0;
 }
 
 ParticleSystem::~ParticleSystem() {
-	for (auto p : particles_) {
-		delete p;
-	}
+	for (auto p : particles_) delete p;
 }
 
 //--------------------------Updates----------------------
@@ -21,32 +17,20 @@ void ParticleSystem::update(float t) {
 	particleGenerator(t);
 
 	if (particles_.size() > 0) {
-		deleteParticles(t);
-
 		// Actualizamos las particulas
-		for (auto p : particles_) {
-			p->update(t);
-		}
-	}
-}
-
-void ParticleSystem::deleteParticles(float t) {
-	Particle *a = *particles_.begin();
-	//Comprobamos que las particulas no estan desactivadas o que no superamos el total permitido
-	while (a->getState() == State::OFF || n_Particles >= MAX_PARTICLES) {
-		particles_.pop_front();
-		delete a;
-		n_Particles--;
-		a = *particles_.begin();
+		for (auto p : particles_) 
+			if (p->getState() == ON) {
+				p->update(t);
+				if (p->getState() == OFF) DeregisterRenderItem(p);
+			}
 	}
 }
 
 void ParticleSystem::particleGenerator(float t) {
 	countdown_ -= t;
 
-	if (countdown_ <= 0 && n_Particles < MAX_PARTICLES) {
+	if (countdown_ <= 0) {
 		createParticle();
-		n_Particles++;
 		countdown_ = iniCount_;
 	}
 }
@@ -62,6 +46,8 @@ void ParticleSystem::createParticle() {
 		static_cast<float>(rand() % 50 + 25),
 		static_cast<float>(rand() % 11) },
 		0.99);
+
+	particle->setMaxAge(5);
 
 	addForcesToPart(particle);
 

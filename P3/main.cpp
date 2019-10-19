@@ -41,7 +41,8 @@ PxGeometry*				Sphere_		= NULL;	//Esfera
 ParticleSystem*		ParticleSystem_ = NULL; //Sistema de particulas
 Particle*			   	 myParticle = NULL; //Particula
 
-ParticleGravity*		grav		= NULL;	//Gravedad
+ParticleGravity*		grav1		= NULL;	//Gravedad
+ParticleGravity*		grav2		= NULL;	//Gravedad
 ParticleForceRegistry*	reg			= NULL; 
 		
 Vector4 color = { 0.1, 0.3, 1, 0};
@@ -73,25 +74,28 @@ void initPhysics(bool interactive) {
 	// ------------------------------------------------------
 
 	//Fuerzas
-	grav = new ParticleGravity({ 0, -10, 0 });
+	grav1 = new ParticleGravity({ 0, -10, 0 });
+	grav2 = new ParticleGravity({ 0, -35, 0 });
 	reg = new ParticleForceRegistry();			// Registro de fuerzas
 
 	//-----------------Objects----------------
 	// Sistema Fuente
 	Vector3 pos = GetCamera()->getDir() * 100 + Vector3{100, 0, 0};
 	ParticleSystem* FountainSystem = new ParticleSystem(pos);
-	FountainSystem->registerForce(grav);
+	FountainSystem->registerForce(grav1);
 	FountainSystem->setReg(reg);
 
 	s_particles_.push_back(FountainSystem);
+	
 
 	// Sistema Fireworks
 	pos = GetCamera()->getDir() * 100;
 	FireworkSystem* fireWorkSystem = new FireworkSystem(pos);
-	fireWorkSystem->registerForce(grav);
+	fireWorkSystem->registerForce(grav2);
 	fireWorkSystem->setReg(reg);
 	
 	s_particles_.push_back(fireWorkSystem);
+	
 }
 
 // Function to configure what happens in each step of physics

@@ -7,19 +7,19 @@
 
 using namespace std;
 
-class FireWork :
-	public Particle {
+class FireWork : public Particle {
 public:
 	FireWork(PxShape* s, Vector4 color, float m);
-	virtual ~FireWork();
+	virtual ~FireWork() {};
 
-	void update(float t);
+	//void update(float t);
 
-	bool exploted_;
-	void setDetected(bool b) { detected_ = b; }
+	//bool exploted_;
+	//void setDetected(bool b) { detected_ = b; }
 	int getGenerations() { return generations_; }
+	void setGen(int g) { generations_ = g; }
 
 private:
 	int generations_;
-	bool detected_;
+	//bool detected_;
 };

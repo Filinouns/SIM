@@ -25,14 +25,11 @@ public:
 	//Update
 	virtual void update(float t);
 	//Aux Update
-	virtual void deleteParticles(float t);
 	virtual void particleGenerator(float t);
 
 
 	// Creacion de particulas
 	void createParticle();
-	//void createFirework(PxShape* s, Vector3 vel);
-	//void createParticle(int t);
 	Vector4 rnd_Color();
 
 	//Fuerzas
@@ -65,7 +62,4 @@ protected:
 
 	//Sistema
 	PxTransform pos_;
-	//SystemType type_;
-
-	int n_Particles;
 };

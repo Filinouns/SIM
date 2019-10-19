@@ -10,14 +10,14 @@ enum State {
 	ON, OFF, INVISIBLE,
 };
 
-class Particle {
+class Particle : public RenderItem{
 public:
 	Particle(PxShape* shape, Vector4 color, float mass);
 	Particle() {};
-	virtual ~Particle();
+	virtual ~Particle() {};
 
 	//Variables publicas
-	RenderItem *renderItem_;
+	//RenderItem *renderItem_;
 
 	// Funciones generales
 	virtual void init(Vector3 p, Vector3 v, float d);
@@ -39,7 +39,11 @@ public:
 	//Rozamiento
 	void setDump(float damp) { damping_ = damp; }
 	//Estado
-	void setState(State s) { this->state_ = s; }
+	void setState(State s) { 
+		this->state_ = s; 
+		if (state_ == OFF) DeregisterRenderItem(this);
+		else RegisterRenderItem(this);
+	}
 	State getState() { return this->state_; }
 	//Edad
 	int getAge() { return age_; }

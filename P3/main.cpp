@@ -17,6 +17,7 @@
 
 //Fuerzas
 #include "ParticleGravity.h"
+#include "Wind.h"
 
 //#include "ParticleForceGenerator.h"
 
@@ -43,6 +44,7 @@ Particle*			   	 myParticle = NULL; //Particula
 
 ParticleGravity*		grav1		= NULL;	//Gravedad
 ParticleGravity*		grav2		= NULL;	//Gravedad
+Wind*					wind		= NULL;	//Viento
 ParticleForceRegistry*	reg			= NULL; 
 		
 Vector4 color = { 0.1, 0.3, 1, 0};
@@ -73,16 +75,20 @@ void initPhysics(bool interactive) {
 	gScene = gPhysics->createScene(sceneDesc);
 	// ------------------------------------------------------
 
+	Vector3 pos = GetCamera()->getDir() * 100 + Vector3{ 100, 100, 0 };
+
 	//Fuerzas
 	grav1 = new ParticleGravity({ 0, -10, 0 });
 	grav2 = new ParticleGravity({ 0, -35, 0 });
+	wind = new Wind({ -500, 0,0 }, pos, 50);
 	reg = new ParticleForceRegistry();			// Registro de fuerzas
 
 	//-----------------Objects----------------
 	// Sistema Fuente
-	Vector3 pos = GetCamera()->getDir() * 100 + Vector3{100, 0, 0};
+	pos = GetCamera()->getDir() * 100 + Vector3{ 100, 0, 0 };
 	ParticleSystem* FountainSystem = new ParticleSystem(pos);
 	FountainSystem->registerForce(grav1);
+	FountainSystem->registerForce(wind);
 	FountainSystem->setReg(reg);
 
 	s_particles_.push_back(FountainSystem);
@@ -92,6 +98,7 @@ void initPhysics(bool interactive) {
 	pos = GetCamera()->getDir() * 100;
 	FireworkSystem* fireWorkSystem = new FireworkSystem(pos);
 	fireWorkSystem->registerForce(grav2);
+	FountainSystem->registerForce(wind);
 	fireWorkSystem->setReg(reg);
 	
 	s_particles_.push_back(fireWorkSystem);

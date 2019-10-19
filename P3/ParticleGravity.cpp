@@ -1,6 +1,5 @@
 #include "ParticleGravity.h"
 
-
 ParticleGravity::~ParticleGravity() {}
 
 void ParticleGravity::updateForce(Particle * p, float t) {

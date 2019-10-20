@@ -41,9 +41,15 @@ void FireworkSystem::particleGenerator(float t) {
 void FireworkSystem::createSon(Vector3 p) {
 	firework = new FireWork(CreateShape(PxCapsuleGeometry(1, 2)), rnd_Color(), 10.0f);
 
-	Vector3 vel = { static_cast<float>(rand() % 45),
+	float vx, vz;
+	vx = rand() % 2;
+	vz = rand() % 2;
+	if (vx == 0) vx = -1;
+	if (vz == 0) vz = -1;
+
+	Vector3 vel = { static_cast<float>(rand() % 45) * vx,
 		40,
-		static_cast<float>(rand() % 45) };
+		static_cast<float>(rand() % 45) * vz };
 
 	firework->init(p, vel, 0.99);
 
@@ -71,33 +77,39 @@ void FireworkSystem::createFirework(PxShape* s, Vector3 vel) {
 }
 
 void FireworkSystem::createParticle(int t) {
+	float vx, vz;
+	vx = rand() % 2;
+	vz = rand() % 2;
+	if (vx == 0) vx = -1;
+	if (vz == 0) vz = -1;
+
 	Vector3 vel;
 	switch (t) {
 	case Esfera:
-		vel = { static_cast<float>(rand() % 11),
+		vel = { static_cast<float>(rand() % 11) * vx,
 			static_cast<float>(rand() % 20 + 25),
-			static_cast<float>(rand() % 11) };
+			static_cast<float>(rand() % 11) * vz};
 
 		createFirework(CreateShape(PxSphereGeometry(2)), vel);
 		break;
 	case Capsula:
-		vel = { static_cast<float>(rand() % 5),
+		vel = { static_cast<float>(rand() % 10) * vx,
 			40,
-			static_cast<float>(rand() % 5) };
+			static_cast<float>(rand() % 10) * vz};
 
 		createFirework(CreateShape(PxCapsuleGeometry(1, 2)), vel);
 		break;
 	case SuperCapsula:
-		vel = { static_cast<float>(rand() % 5),
+		vel = { static_cast<float>(rand() % 10) * vx,
 			40,
-			static_cast<float>(rand() % 5) };
+			static_cast<float>(rand() % 10) * vz};
 
 		createFirework(CreateShape(PxCapsuleGeometry(1.5, 5)), vel);
 		break;
 	case SuperEsfera:
-		vel = { static_cast<float>(rand() % 11),
+		vel = { static_cast<float>(rand() % 11) * vx,
 			static_cast<float>(rand() % 20 + 25),
-			static_cast<float>(rand() % 11) };
+			static_cast<float>(rand() % 11) * vz };
 
 		createFirework(CreateShape(PxSphereGeometry(3)), vel);
 		break;

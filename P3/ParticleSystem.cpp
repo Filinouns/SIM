@@ -40,11 +40,17 @@ void ParticleSystem::particleGenerator(float t) {
 void ParticleSystem::createParticle() {
 	particle = new Particle(CreateShape(*new PxSphereGeometry(2)), rnd_Color(), 10.0f);
 
+	float vx, vz;
+	vx = rand() % 2;
+	vz = rand() % 2;
+	if (vx == 0) vx = -1;
+	if (vz == 0) vz = -1;
+
 	particle->init(
 		pos_.p, 
-		{ static_cast<float>(rand() % 11),
+		{ static_cast<float>(rand() % 11) * vx,
 		static_cast<float>(rand() % 50 + 25),
-		static_cast<float>(rand() % 11) },
+		static_cast<float>(rand() % 11) * vz },
 		0.99);
 
 	particle->setMaxAge(5);

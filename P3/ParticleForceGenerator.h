@@ -1,8 +1,7 @@
 #pragma once
 #include "Particle.h"
 
-class ParticleForceGenerator
-{
+class ParticleForceGenerator {
 public:
 	//ParticleForceGenerator();
 	//virtual ~ParticleForceGenerator();

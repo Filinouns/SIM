@@ -87,6 +87,10 @@ void ParticleSystem::registerForce(ParticleForceGenerator * fg) {
 	forces_.push_back(fg);
 }
 
+void ParticleSystem::removeForce(ParticleForceGenerator* fg) {
+	//forces_.
+}
+
 void ParticleSystem::addForcesToPart(Particle* p) {
 	if (forces_.size() != 0) {
 		for (int i = 0; i < forces_.size(); i++) {

@@ -18,6 +18,7 @@
 //Fuerzas
 #include "ParticleGravity.h"
 #include "Wind.h"
+#include "Explosion.h"
 
 //#include "ParticleForceGenerator.h"
 
@@ -42,9 +43,10 @@ PxGeometry*				Sphere_		= NULL;	//Esfera
 ParticleSystem*		ParticleSystem_ = NULL; //Sistema de particulas
 Particle*			   	 myParticle = NULL; //Particula
 
-ParticleGravity*		grav1		= NULL;	//Gravedad
-ParticleGravity*		grav2		= NULL;	//Gravedad
+ParticleGravity*		grav1		= NULL;	//Gravedad1
+ParticleGravity*		grav2		= NULL;	//Gravedad2
 Wind*					wind		= NULL;	//Viento
+Explosion*				explosion	= NULL; //Explosion
 ParticleForceRegistry*	reg			= NULL; 
 		
 Vector4 color = { 0.1, 0.3, 1, 0};
@@ -80,7 +82,11 @@ void initPhysics(bool interactive) {
 	//Fuerzas
 	grav1 = new ParticleGravity({ 0, -10, 0 });
 	grav2 = new ParticleGravity({ 0, -35, 0 });
-	wind = new Wind({ -500, 0,0 }, pos, 50);
+	wind = new Wind({ 500, 0,0 }, pos, 50);
+	//--
+	pos = GetCamera()->getDir() * 100 + Vector3{ 0, -150, 0 };
+	explosion = new Explosion(100000, pos, 100);
+	//--
 	reg = new ParticleForceRegistry();			// Registro de fuerzas
 
 	//-----------------Objects----------------
@@ -95,10 +101,10 @@ void initPhysics(bool interactive) {
 	
 
 	// Sistema Fireworks
-	pos = GetCamera()->getDir() * 100;
+	pos = GetCamera()->getDir() * 100 + Vector3{ 0, 100, 0};
 	FireworkSystem* fireWorkSystem = new FireworkSystem(pos);
 	fireWorkSystem->registerForce(grav2);
-	FountainSystem->registerForce(wind);
+	fireWorkSystem->registerForce(explosion);
 	fireWorkSystem->setReg(reg);
 	
 	s_particles_.push_back(fireWorkSystem);
@@ -147,6 +153,15 @@ void cleanupPhysics(bool interactive) {
 		}
 	}
 
+	delete grav1;
+	grav1 = nullptr;
+	delete grav2;
+	grav2 = nullptr;
+	delete wind;
+	wind = nullptr;
+	delete explosion;
+	explosion = nullptr;
+
 	// Rigid Body ++++++++++++++++++++++++++++++++++++++++++
 	gScene->release();
 	gDispatcher->release();
@@ -159,32 +174,14 @@ void cleanupPhysics(bool interactive) {
 	gFoundation->release();
 }
 
-/*void createParticle(Vector3 acc, float dump) {
-	PxShape* shape = CreateShape(*Sphere_);
-	myParticle = new Particle(shape, color, 1.0f);
-	shape->release();
-
-	myParticle->init(
-		GetCamera()->getTransform().p,
-		{ GetCamera()->getDir() * 100 },
-		dump);
-
-	ParticleSystem::addForcesToPart()
-
-	particles_.push_back(myParticle);
-}*/
-
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera) {
 	PX_UNUSED(camera);
 
 	switch(toupper(key)) {
-	//case 'B': break;
-	//case ' ':	break;
 	case 'B': {
-		//Vector3 acc = {GetCamera()->getDir() * 100};
-		//createParticle(acc, 0.5f);
-
+		if (explosion->isActive()) explosion->activate(false);
+		else explosion->activate(true);
 		break;
 	}
 	default:

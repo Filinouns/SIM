@@ -34,6 +34,7 @@ public:
 
 	//Fuerzas
 	void registerForce(ParticleForceGenerator* fg);
+	void removeForce(ParticleForceGenerator* fg);
 	void addForcesToPart(Particle* p);
 	void setReg(ParticleForceRegistry* r) { regist = r; }
 

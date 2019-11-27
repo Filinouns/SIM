@@ -7,7 +7,7 @@ ParticleBuoyancy::ParticleBuoyancy(float _maxDepth, float _volume, float _waterH
 	liquidDensity = _liquidDensity;
 }
 
-void ParticleBuoyancy::updateForce(Particle * particle, float t) {
+void ParticleBuoyancy::updateForce(Particle * particle, double t) {
 	float depth = particle->getPos().y;
 	if (depth > waterHeight+maxDepth) {
 		// Out of the water -> nothing to do

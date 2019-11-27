@@ -5,7 +5,7 @@ public:
 	Explosion(float f, Vector3 p, int r);
 	virtual ~Explosion();
 
-	virtual void updateForce(Particle* p, float t);
+	virtual void updateForce(Particle* p, double t);
 
 	int getR() { return r_; }
 	float setCd(float c) { cd_ = c; }

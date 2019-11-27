@@ -11,7 +11,7 @@ class ParticleAnchoredSpring : public ParticleForceGenerator {
 	float restLength;
 public:
 	ParticleAnchoredSpring(Vector3 *_anchor, float _k, float _restLength);
-	virtual void updateForce(Particle* particle, float t);
+	virtual void updateForce(Particle* particle, double t);
 	//Vector3 getAnchor() { return *anchor; }
 	void setAnchor(PxVec3 *a) { anchor = a; }
 	void addK() { k++; std::cout << k << "\n"; }

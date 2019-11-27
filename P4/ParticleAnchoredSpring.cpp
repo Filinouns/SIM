@@ -6,7 +6,7 @@ ParticleAnchoredSpring::ParticleAnchoredSpring(Vector3* _anchor, float _k, float
 	restLength = _restLength;
 }
 
-void ParticleAnchoredSpring::updateForce(Particle *particle, float t) {
+void ParticleAnchoredSpring::updateForce(Particle *particle, double t) {
 	Vector3 f = particle->getPos(); 
 	f -= *anchor;
 

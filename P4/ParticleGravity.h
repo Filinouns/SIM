@@ -9,5 +9,5 @@ public:
 	ParticleGravity(const Vector3& gravity) : g(gravity) {}
 	virtual ~ParticleGravity();
 
-	virtual void updateForce(Particle* p, float t);
+	virtual void updateForce(Particle* p, double t);
 };

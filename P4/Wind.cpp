@@ -15,7 +15,7 @@ Wind::~Wind() {
 	sphere_ = nullptr;
 }
 
-void Wind::updateForce(Particle * p, float t) {
+void Wind::updateForce(Particle * p, double t) {
 	if (!p->hasInfiniteMass()) return;
 
 	// Comprobar la pos de la particula con el radio de accion

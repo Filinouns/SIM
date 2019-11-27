@@ -6,5 +6,5 @@ public:
 	//ParticleForceGenerator();
 	//virtual ~ParticleForceGenerator();
 
-	virtual void updateForce(Particle* particle, float t) = 0;
+	virtual void updateForce(Particle* particle, double t) = 0;
 };

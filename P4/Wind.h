@@ -6,7 +6,7 @@ public:
 	Wind(const Vector3& vient, Vector3 posicion, int r);
 	virtual ~Wind();
 
-	virtual void updateForce(Particle* p, float t);
+	virtual void updateForce(Particle* p, double t);
 
 	void unrender();
 	bool getRender() { return rendering; }

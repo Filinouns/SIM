@@ -16,9 +16,6 @@ public:
 	Particle() {};
 	virtual ~Particle() {};
 
-	//Variables publicas
-	//RenderItem *renderItem_;
-
 	// Funciones generales
 	virtual void init(Vector3 p, Vector3 v, float d);
 	virtual void integrate(float t);
@@ -28,6 +25,7 @@ public:
 	//Posicion
 	void setPos(Vector3 pos) { pos_.p = pos; }
 	Vector3 getPos() { return pos_.p; }
+	Vector3* getPosPointer() { return &pos_.p; }
 	//Transform
 	void setTrans(PxTransform p) { pos_ = p; }
 	PxTransform getTrans() { return pos_; }

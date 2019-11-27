@@ -6,7 +6,7 @@ ParticleSpring::ParticleSpring(Particle *_other, float _k, float _restLength) {
 	restLength = _restLength;
 }
 
-void ParticleSpring::updateForce(Particle *particle, float t) {
+void ParticleSpring::updateForce(Particle *particle, double t) {
 	// Calculate distance vector 
 	Vector3 f = particle->getPos(); 
 	f -= other->getPos();

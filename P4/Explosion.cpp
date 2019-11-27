@@ -18,7 +18,7 @@ Explosion::~Explosion() {
 	sphere_ = nullptr;
 }
 
-void Explosion::updateForce(Particle * p, float t) {
+void Explosion::updateForce(Particle * p, double t) {
 	if (!active_) return;
 	if (!p->hasInfiniteMass()) return;
 
@@ -30,17 +30,7 @@ void Explosion::updateForce(Particle * p, float t) {
 		return;
 	}
 	
-
-	/*timeWorking_ += t;
-	if (timeWorking_ > 1.0f) {
-		timePassed_ = 0;
-		timeWorking_ = 0;
-		return;
-	}*/
 	// Comprobar la pos de la particula con el radio de accion
-	float dx = abs(p->getPos().x - pos_.x);
-	float dy = abs(p->getPos().y - pos_.y);
-	float dz = abs(p->getPos().z - pos_.z);
 	Vector3 m = p->getPos() - pos_;
 	if (m.x < r_ && m.y < r_ && m.z < r_) {
 		//Vector3 m = p->getPos() - pos_;

@@ -12,5 +12,5 @@ class ParticleBuoyancy : public ParticleForceGenerator {
 	float liquidDensity;
 public: 
 	ParticleBuoyancy(float _maxDepth, float _volume, float _waterHeight, float _liquidDensity = 1000.0f);
-	virtual void updateForce(Particle* particle, float t);
+	virtual void updateForce(Particle* particle, double t);
 };

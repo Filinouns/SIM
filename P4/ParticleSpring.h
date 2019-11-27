@@ -10,5 +10,5 @@ class ParticleSpring : public ParticleForceGenerator {
 	float restLength;
 public: 
 	ParticleSpring(Particle* _other, float _k, float _restLength);
-	virtual void updateForce(Particle* particle, float t);
+	virtual void updateForce(Particle* particle, double t);
 };

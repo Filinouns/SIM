@@ -49,7 +49,7 @@ public:
 	//Masa
 	bool hasInfiniteMass() const { return inverse_mass >= 0.0f; }
 	int getMass() {
-		if (inverse_mass == 0) return INT32_MAX;
+		if (inverse_mass <= 0) return 0;
 		else return ((int)1) / inverse_mass;
 	}
 	//Fuerzas

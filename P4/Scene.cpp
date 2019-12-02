@@ -17,10 +17,14 @@ Wind*					wind1 = NULL;	//Viento temp para muelles
 Explosion*				explosion = NULL; //Explosion
 //ParticleSpring*			muelle		= NULL;	//Muelle Comun
 ParticleAnchoredSpring*	muelleFijo = NULL;	//Punto de anclaje del muelle
-ParticleContact*		colision = NULL;
 
+// Constraints
+ParticleCable*			cable = NULL;
+ParticleRod*			barra = NULL;
+ParticleContact*		contact = NULL;
 
-ParticleForceRegistry*	reg = NULL;		// Registro de fuerzas para los sistemas
+// Registro de fuerzas para los sistemas
+ParticleForceRegistry*	reg = NULL;
 
 vector<vector<ParticleForceGenerator*>> forces_;	// Vector de fuerzas para cada sistema
 list<ParticleSystem*> s_particles_;					// Lista de sistemas de particulas
@@ -64,9 +68,22 @@ Scene::~Scene() {
 		delete wind1;
 		wind1 = nullptr;
 	}
+	
+	// Muelles------
 	delete muelleFijo;
 	muelleFijo = nullptr;
 
+	// Constraints-----
+	delete cable;
+	cable = nullptr;
+
+	delete barra;
+	barra = nullptr;
+
+	delete contact;
+	contact = nullptr;
+
+	// --------
 	reg->clear();
 	delete reg;
 	reg = nullptr;
@@ -81,6 +98,7 @@ void Scene::Init() {
 
 	generateParticleSystems();
 	generateSprings();
+	generateConstraints();
 
 	//--------------CAMARA------------------
 	//myCamera_ = GetCamera();
@@ -96,7 +114,7 @@ void Scene::update(double t) {
 		for (auto s : s_particles_) s->update(t);
 	}
 
-	//muelle->updateForce(PartP2_2, t);
+	// Update particulas
 	if (particles_.size() != 0) {
 		for (auto p : particles_) p->update(t);
 	}
@@ -109,6 +127,7 @@ void Scene::update(double t) {
 		wind1 = NULL;
 	}
 
+	contact->resolve(t);
 }
 
 void Scene::keyPress(unsigned char key, const PxTransform &camera) {
@@ -126,6 +145,16 @@ void Scene::keyPress(unsigned char key, const PxTransform &camera) {
 		reg->add(myParticle, wind1);
 		break;
 	}
+	// Aumentar la velocidad de una de las particulas unidas por la barra
+	case 'V': {
+		//p1->setVelocity(Vector3(1.0, 0.0, 0.0));
+	}
+	break;
+	// Para la velocidad de una de las particulas unidas por la barra
+	case 'B': {
+		//p1->setVelocity(Vector3(0.0, 0.0, 0.0));
+	}
+	break;
 	// Aumentar la k
 	case '+':
 		muelleFijo->addK();
@@ -197,6 +226,8 @@ void Scene::generateSprings() {
 	//----------------------------Muelles------------------------------
 
 	//-----------P1
+	// Particula ancladas a un punto mediante un muelle
+
 	//Punto anclaje
 	pos = GetCamera()->getDir() * 100 + Vector3{ 200, 100, 200 };
 	Cube_ = new Particle(CreateShape(*new PxBoxGeometry(5, 5, 5)), color, 1);
@@ -213,10 +244,12 @@ void Scene::generateSprings() {
 	particles_.push_back(myParticle);
 
 	//-----------P2
+	// --Particulas unidas entre si por un  muelle--
+
 	pos = GetCamera()->getDir() * 100 + Vector3{ -200, 100, 200 };
 	//Particula1
 	Particle* PartP2_1 = new Particle(CreateShape(*new PxSphereGeometry(5)), { 1, 0.92, 0.016, 1 }, 2.0f);
-	PartP2_1->init(pos, { 0, 0, 0 }, 0.99);
+	PartP2_1->init(pos, { 3, 3, 0 }, 0.99);
 	PartP2_1->setState(INF);
 	particles_.push_back(PartP2_1);
 	//Particula2
@@ -226,6 +259,8 @@ void Scene::generateSprings() {
 	particles_.push_back(PartP2_2);
 
 	//-----------P3
+	// --Particula simulando el movimiento en el agua mediante un muelle
+
 	//Particula
 	pos = GetCamera()->getDir() * 100 + Vector3{ 200, 100, 300 };
 	Particle* PartP3_1 = new Particle(CreateShape(*new PxBoxGeometry(5, 5, 5)), color, 20);
@@ -263,6 +298,43 @@ void Scene::generateSprings() {
 }
 
 void Scene::generateConstraints() {
+	cable = new ParticleCable();
+	barra = new ParticleRod();
+	contact = new ParticleContact();
 
+	Vector3 pos = GetCamera()->getDir() * 100 + Vector3{ 200, 100, -200 };;
 
+	Particle *p1 = new Particle(CreateShape(*new PxBoxGeometry(3, 3, 3)), { 1, 0, 0, 1 }, 1);
+	p1->init(pos, { 0, 0, 0 }, 0.99);
+	p1->setState(INF);
+	particles_.push_back(p1);
+
+	//p1->shape->get
+
+	Particle *p2 = new Particle(CreateShape(*new PxBoxGeometry(3, 3, 3)), { 1, 0, 1, 1 }, 1);
+	p2->init(pos + Vector3{-5, 0, 0}, { 0, 0, 0 }, 0.99);
+	p2->setState(INF);
+	particles_.push_back(p2);
+
+	//contact->particle[0] = p1;
+	//contact->particle[1] = p2;
+
+	
+	cable->particle[0] = p1;
+	cable->particle[1] = p2;
+
+	/*
+	barra->particle[0] = p1;
+	barra->particle[1] = p2;
+	*/
+	
+	cable->addContact(contact, 5);
+	cable->maxLength = 10;
+	cable->restitution = 1;
+
+	//barra->length = 5;
+
+	//p1->setVel(Vector3(1, 0, 0));
+	//particula = new Particle(1.0f);
+	//particula->setDirVel();
 }

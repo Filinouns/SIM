@@ -17,9 +17,9 @@
 #include "ParticleSpring.h"			// Muelle entre 2 objetos movibles
 
 //Constraints
-
-//Colisiones
-#include "ParticleContact.h"
+//#include "ParticleContact.h"
+#include "ParticleCable.h"
+#include "ParticleRod.h"
 
 #include <PxPhysicsAPI.h>
 

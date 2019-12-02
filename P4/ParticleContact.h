@@ -4,9 +4,10 @@
 
 class ParticleContact {
 public:
-	ParticleContact();
-	virtual ~ParticleContact();
-	
+	// Resolves this contact for both velocity and interpenetration. 
+	void resolve(float t);
+	float calculateSeparatingVelocity() const;
+
 	// Particles involved in the collision 
 	Particle* particle[2];
 	
@@ -19,10 +20,7 @@ public:
 
 	// Como de solapado esta una particula en otra. p < 0 no se tocan, p = 0 se tocan, p > 0 se solapan
 	float penetration;
-protected:
-	// Resolves this contact for both velocity and interpenetration. 
-	void resolve(float t);
-	float calculateSeparatingVelocity() const;
+
 private: 
 	void resolveVelocity(float t);
 	void resolveInterpenetration(float t);
